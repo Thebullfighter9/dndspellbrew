@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - DND Spell Brew</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>DND Spell Brew</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/spells">Spells</a>
+            <a href="/characters">Characters</a>
+            <a href="/npcs">NPCs</a>
+            <a href="/forums">Forums</a>
+            <a href="/profile">Profile</a>
+            <a href="/login.html">Login</a>
+            <a href="/register.html">Sign Up</a>
+        </nav>
+    </header>
+    <main>
+        <section id="user-info">
+            <img id="profile-picture" src="default-profile.png" alt="Profile Picture">
+            <div id="user-bio">
+                <h2 id="username">Username</h2>
+                <p id="bio">User bio goes here...</p>
+            </div>
+            <button id="edit-profile-button">Edit Profile</button>
+        </section>
+        <form id="edit-profile-form" style="display: none;">
+            <label for="new-profile-picture">Change Profile Picture:</label>
+            <input type="file" id="new-profile-picture" name="profilePicture">
+            <label for="new-bio">Edit Bio:</label>
+            <textarea id="new-bio" name="bio"></textarea>
+            <button type="submit">Save Changes</button>
+        </form>
+        <section id="user-posts">
+            <h2>All-Time Posts</h2>
+            <div id="posts-container">
+                <!-- User's posts will be dynamically inserted here -->
+            </div>
+        </section>
+        <section id="recent-activities">
+            <h2>Recent Comments and Reviews</h2>
+            <div id="comments-reviews-container">
+                <!-- User's recent comments and reviews will be dynamically inserted here -->
+            </div>
+        </section>
+    </main>
+    <script src="js/profile.js"></script>
+</body>
+</html>

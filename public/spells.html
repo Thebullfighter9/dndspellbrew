@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spells - DND Spell Brew</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>DND Spell Brew</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/spells">Spells</a>
+            <a href="/characters">Characters</a>
+            <a href="/npcs">NPCs</a>
+            <a href="/forums">Forums</a>
+            <a href="/profile">Profile</a>
+            <a href="/login.html">Login</a>
+            <a href="/register.html">Sign Up</a>
+        </nav>
+    </header>
+    <main>
+        <section id="spell-search">
+            <button id="post-spell-button">Post Spell</button>
+            <select id="category-select">
+                <option value="">All Categories</option>
+                <option value="class">Class</option>
+                <option value="damage">Damage</option>
+                <option value="level">Level</option>
+                <option value="school">School</option>
+                <option value="other">Other</option>
+            </select>
+            <input type="text" id="search-bar" placeholder="Search for spells...">
+        </section>
+        <section id="spell-list">
+            <!-- Spell cards will be dynamically inserted here -->
+        </section>
+        <section id="post-spell-form" style="display: none;">
+            <h2>Post a New Spell</h2>
+            <form id="spell-form">
+                <label for="spell-name">Name:</label>
+                <input type="text" id="spell-name" name="name" required>
+                
+                <label for="spell-description">Description:</label>
+                <textarea id="spell-description" name="description" required></textarea>
+                
+                <label for="spell-level">Level:</label>
+                <select id="spell-level" name="level" required>
+                    <option value="Cantrip">Cantrip</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                </select>
+                
+                <label for="spell-school">School:</label>
+                <input type="text" id="spell-school" name="school" required>
+                
+                <label for="spell-damage-type">Damage Type:</label>
+                <input type="text" id="spell-damage-type" name="damageType">
+                
+                <label for="spell-class">Class:</label>
+                <input type="text" id="spell-class" name="class" required>
+                
+                <label for="spell-casting-time">Casting Time:</label>
+                <input type="text" id="spell-casting-time" name="castingTime" required>
+                
+                <label for="spell-range">Range:</label>
+                <input type="text" id="spell-range" name="range" required>
+                
+                <label for="spell-components">Components:</label>
+                <input type="text" id="spell-components" name="components" required>
+                
+                <label for="spell-duration">Duration:</label>
+                <input type="text" id="spell-duration" name="duration" required>
+                
+                <label for="spell-required-level">Required Level to Cast:</label>
+                <input type="text" id="spell-required-level" name="requiredLevel" required>
+                
+                <label for="spell-username">Username:</label>
+                <input type="text" id="spell-username" name="username" required>
+                
+                <div id="variations">
+                    <h3>Variations</h3>
+                    <div class="variation">
+                        <label for="variation-level">Variation Level:</label>
+                        <select class="variation-level" name="variation-level">
+                            <option value="Cantrip">Cantrip</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                        </select>
+                        
+                        <label for="variation-description">Variation Description:</label>
+                        <textarea class="variation-description" name="variation-description"></textarea>
+                    </div>
+                </div>
+                <button type="button" id="add-variation">Add Variation</button>
+                
+                <button type="submit">Submit</button>
+                <button type="button" id="cancel-post-spell">Cancel</button>
+            </form>
+        </section>
+    </main>
+    <script src="js/spells.js"></script>
+</body>
+</html>
