@@ -1,0 +1,30 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Deploy to Server
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+      run: |
+        sshpass -p $SERVER_PASSWORD ssh $SERVER_USER@$SERVER_IP 'bash -s' < ./deploy.sh
