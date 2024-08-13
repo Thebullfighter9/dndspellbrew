@@ -97,119 +97,76 @@
     <button id="submit-character" style="display:none;">Submit Character</button>
 
     <script>
-       document.getElementById('create-character').addEventListener('click', function () {
-    document.querySelector('.pdf-viewer').style.display = 'flex';
-    document.querySelector('.text-tools').style.display = 'block';
-    document.getElementById('save-character').style.display = 'inline';
-    document.getElementById('submit-character').style.display = 'inline';
-    loadAndModifyPdf();
-});
-
-async function loadAndModifyPdf() {
+ // Function to handle PDF loading and rendering
+async function loadAndRenderPDF() {
     const url = 'css/images/D&DBeyondCharacterSheet.pdf';
     const loadingTask = pdfjsLib.getDocument(url);
 
-    try {
-        const pdf = await loadingTask.promise;
-        renderPdf(pdf);
-    } catch (error) {
-        console.error("Error loading PDF:", error);
-    }
-}
-
-function renderPdf(pdf) {
+    const pdf = await loadingTask.promise;
     const container = document.getElementById('pdf-container');
     container.innerHTML = '';
 
     for (let i = 1; i <= pdf.numPages; i++) {
-        pdf.getPage(i).then(page => {
-            renderPage(page, container);
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 1.5 });
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+        // Append the rendered canvas to the container
+        container.appendChild(canvas);
+
+        // Set up the click event for adding text
+        canvas.addEventListener('click', function (event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            // Call function to add text input at the clicked position
+            addTextInput(x, y, container);
         });
     }
 }
 
-function renderPage(page, container) {
-    const viewport = page.getViewport({ scale: 1.5 });
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-
-    page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
-        container.appendChild(canvas);
-        canvas.addEventListener('click', handleCanvasClick);
-    });
-}
-
-function handleCanvasClick(event) {
-    const rect = event.target.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    addTextInput(x, y, event.target.parentElement);
-}
-
+// Function to add text input at the specified position
 function addTextInput(x, y, container) {
     const input = document.createElement('textarea');
     input.className = 'text-input';
-    setInputStyle(input, x, y);
-    
-    container.appendChild(input);
-    input.focus();
+    input.style.position = 'absolute';
+    input.style.left = `${x}px`;
+    input.style.top = `${y}px`;
 
-    input.addEventListener('blur', () => {
+    const fontSize = document.getElementById('font-size').value;
+    const fontColor = document.getElementById('font-color').value;
+
+    input.style.fontSize = `${fontSize}px`;
+    input.style.color = fontColor;
+    input.style.background = 'transparent';
+    input.style.border = 'none';
+    input.style.outline = 'none';
+    input.style.resize = 'none';
+
+    input.addEventListener('blur', function () {
         if (input.value.trim() === '') {
             input.remove();
         }
     });
+
+    container.appendChild(input);
+    input.focus();
 }
 
-function setInputStyle(input, x, y) {
-    const fontSize = document.getElementById('font-size').value;
-    const fontColor = document.getElementById('font-color').value;
-
-    input.style.left = `${x}px`;
-    input.style.top = `${y}px`;
-    input.style.fontSize = `${fontSize}px`;
-    input.style.color = fontColor;
-}
-
-document.getElementById('save-character').addEventListener('click', saveCharacterProgress);
-document.getElementById('submit-character').addEventListener('click', submitCharacter);
-
-function saveCharacterProgress() {
-    const pdfContainer = document.getElementById('pdf-container');
-    const pdfState = pdfContainer.innerHTML;
-    const code = generateCode();
-    
-    localStorage.setItem(`character_${code}`, pdfState);
-    alert(`Progress saved! Your code is: ${code}`);
-}
-
-function generateCode() {
-    return Math.random().toString(36).substring(2, 15);
-}
-
-function submitCharacter() {
-    const pdfContainer = document.getElementById('pdf-container');
-    const pdfState = pdfContainer.innerHTML;
-
-    fetch('/submit-character', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ pdfState: pdfState }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.success ? 'Character submitted successfully!' : 'Failed to submit character. Please try again.');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while submitting the character.');
-    });
-}
+document.getElementById('create-character').addEventListener('click', function () {
+    document.querySelector('.pdf-viewer').style.display = 'flex';
+    document.querySelector('.text-tools').style.display = 'block';
+    document.getElementById('save-character').style.display = 'inline';
+    document.getElementById('submit-character').style.display = 'inline';
+    loadAndRenderPDF();
+});
 
     </script>
 </body>
