@@ -272,6 +272,27 @@ a {
 
 /* --- Custom Styles for Characters Page --- */
 
+/* Navigation Styles */
+nav {
+    display: flex;
+    justify-content: center;
+    background-color: #121521;
+    padding: 1em;
+    border-bottom: 2px solid #4CAF50;
+}
+
+nav a {
+    color: #bad6f7;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
+nav a:hover {
+    color: #4CAF50;
+}
+
 /* Character Card Styles */
 .character-card {
     background: #2c2f3e;
