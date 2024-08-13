@@ -16,15 +16,15 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Importing Routes
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/users');
 const spellRoutes = require('./routes/spells');
+const characterRoutes = require('./routes/characters');  // <-- Added this line
 
-// Using Routes
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/spells', spellRoutes);
+app.use('/api/characters', characterRoutes);  // <-- Added this line
 
 app.get('/login.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/login.html'));
