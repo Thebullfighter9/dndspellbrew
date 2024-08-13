@@ -31,6 +31,8 @@
             color: black;
             resize: none;
             font-family: Arial, sans-serif;
+            min-width: 100px;
+            min-height: 20px;
         }
 
         .text-tools {
@@ -160,25 +162,8 @@
             const pdfContainer = document.getElementById('pdf-container');
             const pdfState = pdfContainer.innerHTML;
             const code = Math.random().toString(36).substring(2, 15);
-            fetch('/api/characters/save', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code: code, pdfState: pdfState }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(`Progress saved! Your code is: ${code}`);
-                } else {
-                    alert('Failed to save progress. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while saving progress.');
-            });
+            localStorage.setItem(`character_${code}`, pdfState);
+            alert(`Progress saved! Your code is: ${code}`);
         });
 
         // Submit character
@@ -187,7 +172,7 @@
             const pdfState = pdfContainer.innerHTML;
 
             // Make a POST request to submit the PDF
-            fetch('/api/characters/submit', {
+            fetch('/submit-character', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
