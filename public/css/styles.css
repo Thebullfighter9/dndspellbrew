@@ -364,3 +364,62 @@ a {
 .star-rating .star:hover {
     color: #ff8c00;
 }
+
+/* Style for the top bar containing buttons */
+.top-bar {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    background-color: #2c3e50; /* Change to match your theme */
+    border-bottom: 2px solid #34495e; /* Change to match your theme */
+}
+
+.top-bar button {
+    background-color: #3498db; /* Button color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.top-bar button:hover {
+    background-color: #2980b9; /* Darker on hover */
+}
+
+/* Container for the PDF viewer */
+#pdfViewer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #ecf0f1; /* Background color */
+    width: fit-content; /* Adjusts to PDF width */
+}
+
+#pdfViewer canvas {
+    margin-bottom: 20px;
+}
+
+/* General responsive styles */
+@media (max-width: 768px) {
+    .top-bar {
+        flex-direction: column;
+    }
+
+    .top-bar button {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    #pdfViewer {
+        width: 100%;
+        padding: 10px;
+    }
+}

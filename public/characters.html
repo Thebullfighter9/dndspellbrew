@@ -3,109 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Characters</title>
-    <link rel="stylesheet" href="css/styles.css"> <!-- Ensure this path is correct -->
+    <title>Character Sheet Editor</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js"></script>
+    <style>
+        /* Additional styling for text editing options */
+        .pdf-viewer {
+            position: relative;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .pdf-viewer canvas {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .text-input {
+            position: absolute;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 16px;
+            color: black;
+            resize: none;
+            font-family: Arial, sans-serif;
+        }
+
+        .text-tools {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .text-tools select, .text-tools input[type="color"] {
+            margin-right: 10px;
+        }
+
+        /* Adjusting the navigation */
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/spells.html">Spells</a>
+            <a href="/characters.html">Characters</a>
+            <a href="/npcs.html">NPCs</a>
+            <a href="/forums.html">Forums</a>
+            <a href="/profile.html">Profile</a>
+        </nav>
+    </header>
 
-<header>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/spells.html">Spells</a>
-        <a href="/characters.html">Characters</a>
-        <a href="/npcs.html">NPCs</a>
-        <a href="/forums.html">Forums</a>
-        <a href="/profile.html">Profile</a>
-    </nav>
-</header>
+    <!-- Tools for Text Editing -->
+    <div class="text-tools">
+        <label for="font-size">Font Size:</label>
+        <select id="font-size">
+            <option value="12">12px</option>
+            <option value="14">14px</option>
+            <option value="16" selected>16px</option>
+            <option value="18">18px</option>
+            <option value="20">20px</option>
+            <option value="24">24px</option>
+        </select>
 
-<main>
-    <section>
-        <h1>Search and Create Characters</h1>
-        <div id="search-container">
-            <input type="text" id="character-search-bar" placeholder="Search for characters..." aria-label="Search Characters">
-            <button id="create-character-button">Create Character</button>
-        </div>
-    </section>
+        <label for="font-color">Font Color:</label>
+        <input type="color" id="font-color" value="#000000">
+    </div>
 
-    <section id="character-list" style="display: none;">
-        <h2>Character List</h2>
-        <div class="character-card">
-            <img src="default-avatar.png" alt="Character Image">
-            <h3>Character Name</h3>
-            <p>Description of the character goes here.</p>
-            <p>Abilities: Example Ability 1, Example Ability 2</p>
-        </div>
-        <!-- More character cards can be dynamically added here -->
-    </section>
+    <!-- Character Sheet Viewer -->
+    <div id="pdf-container" class="pdf-viewer"></div>
+    <button id="create-character">Create Character</button>
+    <button id="save-character" style="display:none;">Save Progress</button>
+    <button id="submit-character" style="display:none;">Submit Character</button>
 
-    <section id="character-form" style="display: none;">
-        <h2>Create New Character</h2>
-        <form id="new-character-form">
-            <label for="character-name">Character Name:</label>
-            <input type="text" id="character-name" name="character-name" required>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
 
-            <label for="character-description">Character Description:</label>
-            <textarea id="character-description" name="character-description" required></textarea>
-
-            <label for="character-abilities">Character Abilities:</label>
-            <textarea id="character-abilities" name="character-abilities" required></textarea>
-
-            <label for="character-image">Upload Character Image:</label>
-            <input type="file" id="character-image" name="character-image" accept="image/*">
-
-            <button type="submit">Save Character</button>
-        </form>
-    </section>
-
-    <section id="character-ratings">
-        <h2>Rate Characters</h2>
-        <div class="character-rating">
-            <h3>Example Character</h3>
-            <div class="star-rating">
-                <span class="star" data-value="1">&#9733;</span>
-                <span class="star" data-value="2">&#9733;</span>
-                <span class="star" data-value="3">&#9733;</span>
-                <span class="star" data-value="4">&#9733;</span>
-                <span class="star" data-value="5">&#9733;</span>
-            </div>
-            <p id="rating-display">No rating yet</p>
-        </div>
-        <!-- More character ratings can be added here -->
-    </section>
-</main>
-
-<script>
-    // Toggle character form display
-    document.getElementById('create-character-button').addEventListener('click', function () {
-        const form = document.getElementById('character-form');
-        form.style.display = form.style.display === 'block' ? 'none' : 'block';
-        document.getElementById('character-list').style.display = 'none';
-    });
-
-    // Toggle character list display based on search input
-    document.getElementById('character-search-bar').addEventListener('input', function () {
-        const list = document.getElementById('character-list');
-        list.style.display = this.value.length > 0 ? 'block' : 'none';
-    });
-
-    // Rating system functionality
-    const stars = document.querySelectorAll('.star');
-    stars.forEach(star => {
-        star.addEventListener('click', function () {
-            const ratingValue = this.getAttribute('data-value');
-            document.getElementById('rating-display').textContent = `Rated ${ratingValue} stars`;
-            stars.forEach(s => s.style.color = ratingValue >= s.getAttribute('data-value') ? '#ffd700' : '#ccc');
+        document.getElementById('create-character').addEventListener('click', function () {
+            document.querySelector('.pdf-viewer').style.display = 'flex';
+            document.querySelector('.text-tools').style.display = 'block';
+            document.getElementById('save-character').style.display = 'inline';
+            document.getElementById('submit-character').style.display = 'inline';
+            loadAndModifyPdf();
         });
-    });
 
-    // Character creation form submission (example, no backend integration)
-    document.getElementById('new-character-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        alert('Character created! (This is just a simulation, no actual saving is done.)');
-        document.getElementById('character-form').style.display = 'none';
-    });
-</script>
+        async function loadAndModifyPdf() {
+            const url = 'css/images/D&DBeyondCharacterSheet.pdf';
+            const loadingTask = pdfjsLib.getDocument(url);
 
+            const pdf = await loadingTask.promise;
+            const container = document.getElementById('pdf-container');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale: 1.5 });
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                container.appendChild(canvas);
+
+                // Allow adding text inputs on the PDF
+                canvas.addEventListener('click', function(event) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+
+                    const input = document.createElement('textarea');
+                    input.className = 'text-input';
+                    input.style.left = `${x}px`;
+                    input.style.top = `${y}px`;
+
+                    const fontSize = document.getElementById('font-size').value;
+                    const fontColor = document.getElementById('font-color').value;
+
+                    input.style.fontSize = `${fontSize}px`;
+                    input.style.color = fontColor;
+
+                    input.addEventListener('blur', function() {
+                        if (input.value.trim() === '') {
+                            input.remove();
+                        }
+                    });
+
+                    container.appendChild(input);
+                    input.focus();
+                });
+            }
+        }
+
+        // Save progress
+        document.getElementById('save-character').addEventListener('click', function() {
+            const pdfContainer = document.getElementById('pdf-container');
+            const pdfState = pdfContainer.innerHTML;
+            const code = Math.random().toString(36).substring(2, 15);
+            localStorage.setItem(`character_${code}`, pdfState);
+            alert(`Progress saved! Your code is: ${code}`);
+        });
+
+        // Submit character
+        document.getElementById('submit-character').addEventListener('click', function() {
+            const pdfContainer = document.getElementById('pdf-container');
+            const pdfState = pdfContainer.innerHTML;
+
+            // Make a POST request to submit the PDF
+            fetch('/submit-character', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ pdfState: pdfState }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Character submitted successfully!');
+                } else {
+                    alert('Failed to submit character. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the character.');
+            });
+        });
+    </script>
 </body>
 </html>

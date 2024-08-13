@@ -16,10 +16,12 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Importing Routes
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/users');
 const spellRoutes = require('./routes/spells');
 
+// Using Routes
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/spells', spellRoutes);

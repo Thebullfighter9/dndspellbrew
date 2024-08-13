@@ -21,35 +21,38 @@ function verifyToken(req, res, next) {
     });
 }
 
-router.post('/register', (req, res) => {
-    const { username, email, password } = req.body;
-    bcrypt.hash(password, 10).then(hashedPassword => {
+router.post('/register', async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ username, email, password: hashedPassword });
-        newUser.save().then(user => {
-            res.json(user);
-        }).catch(err => {
-            res.status(500).send('Error registering new user.');
-        });
-    });
+        await newUser.save();
+        res.status(201).json(newUser);
+    } catch (error) {
+        res.status(500).send('Error registering new user.');
+    }
 });
 
-router.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    User.findOne({ email }).then(user => {
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
         if (!user) return res.status(404).send('User not found');
-        bcrypt.compare(password, user.password).then(isMatch => {
-            if (!isMatch) return res.status(401).send('Invalid credentials');
-            const token = jwt.sign({ id: user._id }, 'your_jwt_secret');
-            res.json({ token });
-        });
-    });
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(401).send('Invalid credentials');
+        const token = jwt.sign({ id: user._id }, 'your_jwt_secret');
+        res.json({ token });
+    } catch (error) {
+        res.status(500).send('Login error');
+    }
 });
 
-router.get('/profile', verifyToken, (req, res) => {
-    User.findById(req.userId).populate('posts').then(user => {
+router.get('/profile', verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).populate('posts');
         if (!user) return res.status(404).send('User not found');
 
-        const profileData = {
+        res.json({
             user: {
                 username: user.username,
                 bio: user.bio,
@@ -57,13 +60,15 @@ router.get('/profile', verifyToken, (req, res) => {
             },
             posts: user.posts,
             recentActivities: user.recentActivities
-        };
-        res.json(profileData);
-    });
+        });
+    } catch (error) {
+        res.status(500).send('Error fetching profile');
+    }
 });
 
-router.put('/profile', verifyToken, upload.single('profilePicture'), (req, res) => {
-    User.findById(req.userId).then(user => {
+router.put('/profile', verifyToken, upload.single('profilePicture'), async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
         if (!user) return res.status(404).send('User not found');
 
         if (req.file) {
@@ -79,12 +84,11 @@ router.put('/profile', verifyToken, upload.single('profilePicture'), (req, res) 
 
         user.bio = req.body.bio;
 
-        user.save().then(updatedUser => {
-            res.json({ user: updatedUser });
-        }).catch(err => {
-            res.status(500).send('Error updating profile.');
-        });
-    });
+        await user.save();
+        res.json({ user });
+    } catch (error) {
+        res.status(500).send('Error updating profile');
+    }
 });
 
 module.exports = router;
