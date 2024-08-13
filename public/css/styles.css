@@ -1,4 +1,4 @@
-/* General Styles */
+/* Existing Styles (from your original CSS file) */
 @import url('https://fonts.cdnfonts.com/css/hubot-sans');
 * {
     box-sizing: border-box;
@@ -268,4 +268,99 @@ a {
     padding: 2em;
     max-width: 600px;
     margin: 2em auto;
+}
+
+/* --- Custom Styles for Characters Page --- */
+
+/* Character Card Styles */
+.character-card {
+    background: #2c2f3e;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    padding: 1.5em;
+    width: 350px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin: 1em auto;
+}
+
+.character-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+.character-card img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    margin-bottom: 1em;
+}
+
+.character-card h3 {
+    margin-top: 0.5em;
+    color: #bad6f7;
+    font-size: 1.5em;
+}
+
+.character-card p {
+    margin: 0.5em 0;
+    color: #d8ecf8;
+    font-size: 1.2em;
+}
+
+/* Detailed Profile Form */
+#detailed-profile-form {
+    background: #1a1d29;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    margin: 2em auto;
+}
+
+#detailed-profile-form label {
+    color: #bad6f7;
+    margin-top: 1em;
+}
+
+#detailed-profile-form input, #detailed-profile-form textarea {
+    padding: 0.7em;
+    margin-top: 0.5em;
+    border: 1px solid #4CAF50;
+    border-radius: 4px;
+    background: #2c2f3e;
+    color: #fff;
+}
+
+#detailed-profile-form button {
+    margin-top: 1.5em;
+    padding: 0.7em 1.5em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#detailed-profile-form button:hover {
+    background-color: #45a049;
+}
+
+/* Star Rating System */
+.star-rating {
+    font-size: 1.5em;
+    color: #ffd700;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.star-rating .star {
+    margin: 0 0.2em;
+    transition: color 0.3s;
+}
+
+.star-rating .star:hover {
+    color: #ff8c00;
 }
