@@ -3,92 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Creation</title>
+    <title>Character Page</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your existing stylesheet -->
     <style>
-        /* Basic styles for layout and form */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        h1 {
-            text-align: center;
             color: #333;
         }
 
-        form {
-            margin-bottom: 30px;
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
         }
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        input, select, textarea {
-            width: 100%;
+        .search-bar input {
+            flex-grow: 1;
             padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
             border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
         }
 
-        button {
+        .search-bar button {
+            padding: 10px 20px;
             background-color: #28a745;
             color: white;
-            padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        button:hover {
+        .search-bar button:hover {
             background-color: #218838;
         }
 
+        #characterForm {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            overflow: hidden;
+        }
+
         .character-list {
-            margin-top: 30px;
+            margin-top: 40px;
         }
 
         .character {
-            border-bottom: 1px solid #ccc;
-            padding: 10px 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .character:hover {
+            transform: scale(1.02);
         }
 
         .character h2 {
-            margin: 0;
+            margin-top: 0;
+            cursor: pointer;
         }
 
-        .character p {
-            margin: 5px 0;
+        .character .details {
+            display: none;
+            margin-top: 10px;
         }
 
         .review {
-            display: flex;
-            align-items: center;
-        }
-
-        .review .stars {
-            margin-left: 10px;
+            margin-top: 20px;
+            font-size: 18px;
         }
 
         .stars {
-            display: flex;
-            justify-content: flex-start;
-            gap: 10px;
-            margin-bottom: 15px;
+            display: inline-block;
         }
 
         .stars input {
@@ -97,25 +100,31 @@
 
         .stars label {
             font-size: 24px;
+            color: #ccc;
             cursor: pointer;
-            color: #ddd;
+            transition: color 0.2s;
         }
 
-        .stars input:checked ~ label {
-            color: gold;
+        .stars input:checked ~ label,
+        .stars input:checked ~ label ~ label {
+            color: #f39c12;
         }
 
         .stars label:hover,
         .stars label:hover ~ label {
-            color: gold;
+            color: #f1c40f;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h1>Create a New Character</h1>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search characters...">
+            <button id="createCharacterBtn">Create Character</button>
+        </div>
+
         <form id="characterForm">
+            <h1>Create a New Character</h1>
             <label for="name">Character Name</label>
             <input type="text" id="name" name="name" required>
 
@@ -153,11 +162,13 @@
     </div>
 
     <script>
-        // Handle form submission
+        document.getElementById('createCharacterBtn').addEventListener('click', function() {
+            document.getElementById('characterForm').style.display = 'block';
+            document.getElementById('createCharacterBtn').style.display = 'none';
+        });
+
         document.getElementById('characterForm').addEventListener('submit', function(event) {
             event.preventDefault();
-
-            // Get form data
             const formData = new FormData(this);
             const character = {
                 name: formData.get('name'),
@@ -169,17 +180,17 @@
                 intelligence: formData.get('intelligence'),
                 wisdom: formData.get('wisdom'),
                 charisma: formData.get('charisma'),
-                rating: 0 // Initial rating is 0
+                rating: 0,
+                votes: 0
             };
 
-            // Display the new character
             displayCharacter(character);
 
-            // Reset form
             this.reset();
+            document.getElementById('characterForm').style.display = 'none';
+            document.getElementById('createCharacterBtn').style.display = 'inline-block';
         });
 
-        // Function to display a character
         function displayCharacter(character) {
             const characterList = document.getElementById('characterList');
             const characterDiv = document.createElement('div');
@@ -187,56 +198,50 @@
 
             characterDiv.innerHTML = `
                 <h2>${character.name}</h2>
-                <p><strong>Race:</strong> ${character.race}</p>
-                <p><strong>Class:</strong> ${character.class}</p>
-                <p><strong>Bio:</strong> ${character.bio}</p>
-                <p><strong>Strength:</strong> ${character.strength}</p>
-                <p><strong>Dexterity:</strong> ${character.dexterity}</p>
-                <p><strong>Intelligence:</strong> ${character.intelligence}</p>
-                <p><strong>Wisdom:</strong> ${character.wisdom}</p>
-                <p><strong>Charisma:</strong> ${character.charisma}</p>
-                <div class="review">
-                    <strong>Rate this character:</strong>
-                    <div class="stars">
-                        <input type="radio" id="star5-${character.name}" name="rating-${character.name}" value="5">
-                        <label for="star5-${character.name}">★</label>
-                        <input type="radio" id="star4-${character.name}" name="rating-${character.name}" value="4">
-                        <label for="star4-${character.name}">★</label>
-                        <input type="radio" id="star3-${character.name}" name="rating-${character.name}" value="3">
-                        <label for="star3-${character.name}">★</label>
-                        <input type="radio" id="star2-${character.name}" name="rating-${character.name}" value="2">
-                        <label for="star2-${character.name}">★</label>
-                        <input type="radio" id="star1-${character.name}" name="rating-${character.name}" value="1">
-                        <label for="star1-${character.name}">★</label>
+                <div class="details">
+                    <p><strong>Race:</strong> ${character.race}</p>
+                    <p><strong>Class:</strong> ${character.class}</p>
+                    <p><strong>Bio:</strong> ${character.bio}</p>
+                    <p><strong>Strength:</strong> ${character.strength}</p>
+                    <p><strong>Dexterity:</strong> ${character.dexterity}</p>
+                    <p><strong>Intelligence:</strong> ${character.intelligence}</p>
+                    <p><strong>Wisdom:</strong> ${character.wisdom}</p>
+                    <p><strong>Charisma:</strong> ${character.charisma}</p>
+                    <div class="review">
+                        <strong>Rate this character:</strong>
+                        <div class="stars">
+                            <input type="radio" id="star5-${character.name}" name="rating-${character.name}" value="5">
+                            <label for="star5-${character.name}">★</label>
+                            <input type="radio" id="star4-${character.name}" name="rating-${character.name}" value="4">
+                            <label for="star4-${character.name}">★</label>
+                            <input type="radio" id="star3-${character.name}" name="rating-${character.name}" value="3">
+                            <label for="star3-${character.name}">★</label>
+                            <input type="radio" id="star2-${character.name}" name="rating-${character.name}" value="2">
+                            <label for="star2-${character.name}">★</label>
+                            <input type="radio" id="star1-${character.name}" name="rating-${character.name}" value="1">
+                            <label for="star1-${character.name}">★</label>
+                        </div>
+                        <p id="rating-${character.name}">Average Rating: ${character.rating} (Votes: ${character.votes})</p>
                     </div>
                 </div>
             `;
 
             characterList.appendChild(characterDiv);
 
-            // Handle rating
+            const details = characterDiv.querySelector('.details');
+            const header = characterDiv.querySelector('h2');
+            header.addEventListener('click', () => {
+                details.style.display = details.style.display === 'block' ? 'none' : 'block';
+            });
+
             const stars = characterDiv.querySelectorAll(`input[name="rating-${character.name}"]`);
             stars.forEach(star => {
                 star.addEventListener('change', function() {
-                    character.rating = this.value;
-                    updateCharacterRating(character.name, character.rating);
+                    character.rating = ((character.rating * character.votes) + parseInt(this.value)) / (character.votes + 1);
+                    character.votes += 1;
+                    document.getElementById(`rating-${character.name}`).innerText = `Average Rating: ${character.rating.toFixed(1)} (Votes: ${character.votes})`;
                 });
             });
-        }
-
-        // Function to update character rating
-        function updateCharacterRating(characterName, rating) {
-            const characterDiv = document.querySelector(`.character h2:contains('${characterName}')`).parentElement;
-            characterDiv.querySelector('.review .stars').innerHTML = renderStars(rating);
-        }
-
-        // Function to render stars based on rating
-        function renderStars(rating) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                stars += i <= rating ? '★' : '☆';
-            }
-            return stars;
         }
     </script>
 </body>
