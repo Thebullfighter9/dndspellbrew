@@ -4,31 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Characters</title>
-    <link rel="stylesheet" href="path/to/your/styles.css"> <!-- Link to your existing CSS -->
+    <link rel="stylesheet" href="styles.css"> <!-- Ensure this path is correct -->
 </head>
 <body>
 
 <header>
     <nav>
-        <a href="index.html">Home</a>
-        <a href="spells.html">Spells</a>
-        <a href="characters.html">Characters</a>
-        <a href="profile.html">Profile</a>
+        <a href="/">Home</a>
+        <a href="/spells.html">Spells</a>
+        <a href="/characters.html">Characters</a>
+        <a href="/npcs.html">NPCs</a>
+        <a href="/forums.html">Forums</a>
+        <a href="/profile.html">Profile</a>
     </nav>
 </header>
 
 <main>
     <section>
-        <h1>Search Characters</h1>
+        <h1>Search and Create Characters</h1>
         <div id="search-container">
-            <input type="text" id="character-search-bar" placeholder="Search for characters...">
+            <input type="text" id="character-search-bar" placeholder="Search for characters..." aria-label="Search Characters">
             <button id="create-character-button">Create Character</button>
         </div>
     </section>
 
     <section id="character-list" style="display: none;">
         <h2>Character List</h2>
-        <!-- Character cards will be dynamically inserted here -->
+        <div class="character-card">
+            <img src="default-avatar.png" alt="Character Image">
+            <h3>Character Name</h3>
+            <p>Description of the character goes here.</p>
+            <p>Abilities: Example Ability 1, Example Ability 2</p>
+        </div>
+        <!-- More character cards can be dynamically added here -->
     </section>
 
     <section id="character-form" style="display: none;">
@@ -43,6 +51,9 @@
             <label for="character-abilities">Character Abilities:</label>
             <textarea id="character-abilities" name="character-abilities" required></textarea>
 
+            <label for="character-image">Upload Character Image:</label>
+            <input type="file" id="character-image" name="character-image" accept="image/*">
+
             <button type="submit">Save Character</button>
         </form>
     </section>
@@ -50,7 +61,6 @@
     <section id="character-ratings">
         <h2>Rate Characters</h2>
         <div class="character-rating">
-            <!-- Example Character for Rating -->
             <h3>Example Character</h3>
             <div class="star-rating">
                 <span class="star" data-value="1">&#9733;</span>
@@ -61,14 +71,22 @@
             </div>
             <p id="rating-display">No rating yet</p>
         </div>
+        <!-- More character ratings can be added here -->
     </section>
 </main>
 
 <script>
-    // Event listeners for creating a character
+    // Toggle character form display
     document.getElementById('create-character-button').addEventListener('click', function () {
-        document.getElementById('character-form').style.display = 'block';
+        const form = document.getElementById('character-form');
+        form.style.display = form.style.display === 'block' ? 'none' : 'block';
         document.getElementById('character-list').style.display = 'none';
+    });
+
+    // Toggle character list display based on search input
+    document.getElementById('character-search-bar').addEventListener('input', function () {
+        const list = document.getElementById('character-list');
+        list.style.display = this.value.length > 0 ? 'block' : 'none';
     });
 
     // Rating system functionality
@@ -76,9 +94,16 @@
     stars.forEach(star => {
         star.addEventListener('click', function () {
             const ratingValue = this.getAttribute('data-value');
-            document.getElementById('rating-display').textContent = `You rated this character ${ratingValue} stars`;
-            stars.forEach(s => s.style.color = ratingValue >= s.getAttribute('data-value') ? '#ffd700' : '#fff');
+            document.getElementById('rating-display').textContent = `Rated ${ratingValue} stars`;
+            stars.forEach(s => s.style.color = ratingValue >= s.getAttribute('data-value') ? '#ffd700' : '#ccc');
         });
+    });
+
+    // Character creation form submission (example, no backend integration)
+    document.getElementById('new-character-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        alert('Character created! (This is just a simulation, no actual saving is done.)');
+        document.getElementById('character-form').style.display = 'none';
     });
 </script>
 
