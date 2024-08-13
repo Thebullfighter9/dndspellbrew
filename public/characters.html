@@ -3,246 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Page</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your existing stylesheet -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-        }
-
-        .search-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .search-bar input {
-            flex-grow: 1;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            margin-right: 10px;
-        }
-
-        .search-bar button {
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .search-bar button:hover {
-            background-color: #218838;
-        }
-
-        #characterForm {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
-            overflow: hidden;
-        }
-
-        .character-list {
-            margin-top: 40px;
-        }
-
-        .character {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .character:hover {
-            transform: scale(1.02);
-        }
-
-        .character h2 {
-            margin-top: 0;
-            cursor: pointer;
-        }
-
-        .character .details {
-            display: none;
-            margin-top: 10px;
-        }
-
-        .review {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-
-        .stars {
-            display: inline-block;
-        }
-
-        .stars input {
-            display: none;
-        }
-
-        .stars label {
-            font-size: 24px;
-            color: #ccc;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .stars input:checked ~ label,
-        .stars input:checked ~ label ~ label {
-            color: #f39c12;
-        }
-
-        .stars label:hover,
-        .stars label:hover ~ label {
-            color: #f1c40f;
-        }
-    </style>
+    <title>Characters</title>
+    <link rel="stylesheet" href="path/to/your/styles.css"> <!-- Link to your existing CSS -->
 </head>
 <body>
-    <div class="container">
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search characters...">
-            <button id="createCharacterBtn">Create Character</button>
+
+<header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="spells.html">Spells</a>
+        <a href="characters.html">Characters</a>
+        <a href="profile.html">Profile</a>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h1>Search Characters</h1>
+        <div id="search-container">
+            <input type="text" id="character-search-bar" placeholder="Search for characters...">
+            <button id="create-character-button">Create Character</button>
         </div>
+    </section>
 
-        <form id="characterForm">
-            <h1>Create a New Character</h1>
-            <label for="name">Character Name</label>
-            <input type="text" id="name" name="name" required>
+    <section id="character-list" style="display: none;">
+        <h2>Character List</h2>
+        <!-- Character cards will be dynamically inserted here -->
+    </section>
 
-            <label for="race">Race</label>
-            <input type="text" id="race" name="race" required>
+    <section id="character-form" style="display: none;">
+        <h2>Create New Character</h2>
+        <form id="new-character-form">
+            <label for="character-name">Character Name:</label>
+            <input type="text" id="character-name" name="character-name" required>
 
-            <label for="class">Class</label>
-            <input type="text" id="class" name="class" required>
+            <label for="character-description">Character Description:</label>
+            <textarea id="character-description" name="character-description" required></textarea>
 
-            <label for="bio">Character Bio</label>
-            <textarea id="bio" name="bio" rows="4" required></textarea>
+            <label for="character-abilities">Character Abilities:</label>
+            <textarea id="character-abilities" name="character-abilities" required></textarea>
 
-            <label for="strength">Strength</label>
-            <input type="number" id="strength" name="strength" min="1" max="20" required>
-
-            <label for="dexterity">Dexterity</label>
-            <input type="number" id="dexterity" name="dexterity" min="1" max="20" required>
-
-            <label for="intelligence">Intelligence</label>
-            <input type="number" id="intelligence" name="intelligence" min="1" max="20" required>
-
-            <label for="wisdom">Wisdom</label>
-            <input type="number" id="wisdom" name="wisdom" min="1" max="20" required>
-
-            <label for="charisma">Charisma</label>
-            <input type="number" id="charisma" name="charisma" min="1" max="20" required>
-
-            <button type="submit">Create Character</button>
+            <button type="submit">Save Character</button>
         </form>
+    </section>
 
-        <div class="character-list" id="characterList">
-            <h2>Character List</h2>
-            <!-- Characters will be displayed here -->
+    <section id="character-ratings">
+        <h2>Rate Characters</h2>
+        <div class="character-rating">
+            <!-- Example Character for Rating -->
+            <h3>Example Character</h3>
+            <div class="star-rating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+            <p id="rating-display">No rating yet</p>
         </div>
-    </div>
+    </section>
+</main>
 
-    <script>
-        document.getElementById('createCharacterBtn').addEventListener('click', function() {
-            document.getElementById('characterForm').style.display = 'block';
-            document.getElementById('createCharacterBtn').style.display = 'none';
+<script>
+    // Event listeners for creating a character
+    document.getElementById('create-character-button').addEventListener('click', function () {
+        document.getElementById('character-form').style.display = 'block';
+        document.getElementById('character-list').style.display = 'none';
+    });
+
+    // Rating system functionality
+    const stars = document.querySelectorAll('.star');
+    stars.forEach(star => {
+        star.addEventListener('click', function () {
+            const ratingValue = this.getAttribute('data-value');
+            document.getElementById('rating-display').textContent = `You rated this character ${ratingValue} stars`;
+            stars.forEach(s => s.style.color = ratingValue >= s.getAttribute('data-value') ? '#ffd700' : '#fff');
         });
+    });
+</script>
 
-        document.getElementById('characterForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            const character = {
-                name: formData.get('name'),
-                race: formData.get('race'),
-                class: formData.get('class'),
-                bio: formData.get('bio'),
-                strength: formData.get('strength'),
-                dexterity: formData.get('dexterity'),
-                intelligence: formData.get('intelligence'),
-                wisdom: formData.get('wisdom'),
-                charisma: formData.get('charisma'),
-                rating: 0,
-                votes: 0
-            };
-
-            displayCharacter(character);
-
-            this.reset();
-            document.getElementById('characterForm').style.display = 'none';
-            document.getElementById('createCharacterBtn').style.display = 'inline-block';
-        });
-
-        function displayCharacter(character) {
-            const characterList = document.getElementById('characterList');
-            const characterDiv = document.createElement('div');
-            characterDiv.classList.add('character');
-
-            characterDiv.innerHTML = `
-                <h2>${character.name}</h2>
-                <div class="details">
-                    <p><strong>Race:</strong> ${character.race}</p>
-                    <p><strong>Class:</strong> ${character.class}</p>
-                    <p><strong>Bio:</strong> ${character.bio}</p>
-                    <p><strong>Strength:</strong> ${character.strength}</p>
-                    <p><strong>Dexterity:</strong> ${character.dexterity}</p>
-                    <p><strong>Intelligence:</strong> ${character.intelligence}</p>
-                    <p><strong>Wisdom:</strong> ${character.wisdom}</p>
-                    <p><strong>Charisma:</strong> ${character.charisma}</p>
-                    <div class="review">
-                        <strong>Rate this character:</strong>
-                        <div class="stars">
-                            <input type="radio" id="star5-${character.name}" name="rating-${character.name}" value="5">
-                            <label for="star5-${character.name}">★</label>
-                            <input type="radio" id="star4-${character.name}" name="rating-${character.name}" value="4">
-                            <label for="star4-${character.name}">★</label>
-                            <input type="radio" id="star3-${character.name}" name="rating-${character.name}" value="3">
-                            <label for="star3-${character.name}">★</label>
-                            <input type="radio" id="star2-${character.name}" name="rating-${character.name}" value="2">
-                            <label for="star2-${character.name}">★</label>
-                            <input type="radio" id="star1-${character.name}" name="rating-${character.name}" value="1">
-                            <label for="star1-${character.name}">★</label>
-                        </div>
-                        <p id="rating-${character.name}">Average Rating: ${character.rating} (Votes: ${character.votes})</p>
-                    </div>
-                </div>
-            `;
-
-            characterList.appendChild(characterDiv);
-
-            const details = characterDiv.querySelector('.details');
-            const header = characterDiv.querySelector('h2');
-            header.addEventListener('click', () => {
-                details.style.display = details.style.display === 'block' ? 'none' : 'block';
-            });
-
-            const stars = characterDiv.querySelectorAll(`input[name="rating-${character.name}"]`);
-            stars.forEach(star => {
-                star.addEventListener('change', function() {
-                    character.rating = ((character.rating * character.votes) + parseInt(this.value)) / (character.votes + 1);
-                    character.votes += 1;
-                    document.getElementById(`rating-${character.name}`).innerText = `Average Rating: ${character.rating.toFixed(1)} (Votes: ${character.votes})`;
-                });
-            });
-        }
-    </script>
 </body>
 </html>
