@@ -97,7 +97,7 @@
     <button id="submit-character" style="display:none;">Submit Character</button>
 
     <script>
- // Function to handle PDF loading and rendering
+// Function to handle PDF loading and rendering
 async function loadAndRenderPDF() {
     const url = 'css/images/D&DBeyondCharacterSheet.pdf';
     const loadingTask = pdfjsLib.getDocument(url);
@@ -120,23 +120,22 @@ async function loadAndRenderPDF() {
         // Append the rendered canvas to the container
         container.appendChild(canvas);
 
-        // Set up the click event for adding text
+        // Set up the click event for adding draggable text input
         canvas.addEventListener('click', function (event) {
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
 
-            // Call function to add text input at the clicked position
-            addTextInput(x, y, container);
+            // Call function to add draggable text input at the clicked position
+            addDraggableTextInput(x, y, container);
         });
     }
 }
 
-// Function to add text input at the specified position
-function addTextInput(x, y, container) {
+// Function to add draggable text input at the specified position
+function addDraggableTextInput(x, y, container) {
     const input = document.createElement('textarea');
-    input.className = 'text-input';
-    input.style.position = 'absolute';
+    input.className = 'text-input draggable';
     input.style.left = `${x}px`;
     input.style.top = `${y}px`;
 
@@ -145,10 +144,9 @@ function addTextInput(x, y, container) {
 
     input.style.fontSize = `${fontSize}px`;
     input.style.color = fontColor;
-    input.style.background = 'transparent';
-    input.style.border = 'none';
-    input.style.outline = 'none';
-    input.style.resize = 'none';
+
+    // Make the text input draggable
+    makeElementDraggable(input);
 
     input.addEventListener('blur', function () {
         if (input.value.trim() === '') {
@@ -158,6 +156,31 @@ function addTextInput(x, y, container) {
 
     container.appendChild(input);
     input.focus();
+}
+
+// Function to make an element draggable
+function makeElementDraggable(element) {
+    let isDragging = false;
+
+    element.addEventListener('mousedown', function (e) {
+        isDragging = true;
+        const offsetX = e.clientX - parseInt(element.style.left);
+        const offsetY = e.clientY - parseInt(element.style.top);
+
+        document.addEventListener('mousemove', moveElement);
+
+        document.addEventListener('mouseup', function () {
+            isDragging = false;
+            document.removeEventListener('mousemove', moveElement);
+        });
+
+        function moveElement(event) {
+            if (isDragging) {
+                element.style.left = `${event.clientX - offsetX}px`;
+                element.style.top = `${event.clientY - offsetY}px`;
+            }
+        }
+    });
 }
 
 document.getElementById('create-character').addEventListener('click', function () {

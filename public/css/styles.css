@@ -427,20 +427,23 @@ nav a:hover {
 #pdfViewer canvas {
     margin-bottom: 20px;
 }
-
-/* General responsive styles */
-@media (max-width: 768px) {
-    .top-bar {
-        flex-direction: column;
-    }
-
-    .top-bar button {
-        margin-bottom: 10px;
-        width: 100%;
-    }
-
-    #pdfViewer {
+  #pdfViewer {
         width: 100%;
         padding: 10px;
     }
+
+.text-input {
+    position: absolute;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    color: black;
+    resize: none;
+    font-family: Arial, sans-serif;
+    cursor: move; /* Indicate that the element is draggable */
+}
+
+.draggable {
+    cursor: move;
 }
