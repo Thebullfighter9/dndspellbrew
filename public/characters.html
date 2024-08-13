@@ -3,66 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Sheet Editor</title>
+    <title>Advanced PDF Editor</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js"></script>
-    <style>
-        /* Additional styling for text editing options */
-        .pdf-viewer {
-            position: relative;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px;
-        }
-
-        .pdf-viewer canvas {
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-        }
-
-        .text-input {
-            position: absolute;
-            border: none;
-            background: transparent;
-            outline: none;
-            font-size: 16px;
-            color: black;
-            resize: none;
-            font-family: Arial, sans-serif;
-            min-width: 100px;
-            min-height: 20px;
-        }
-
-        .text-tools {
-            display: none;
-            margin-bottom: 20px;
-        }
-
-        .text-tools select, .text-tools input[type="color"] {
-            margin-right: 10px;
-        }
-
-        /* Adjusting the navigation */
-        nav {
-            background-color: #333;
-            padding: 10px;
-        }
-
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin-right: 15px;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
     <header>
         <nav>
             <a href="/">Home</a>
@@ -74,123 +18,36 @@
         </nav>
     </header>
 
-    <!-- Tools for Text Editing -->
-    <div class="text-tools">
-        <label for="font-size">Font Size:</label>
-        <select id="font-size">
-            <option value="12">12px</option>
-            <option value="14">14px</option>
-            <option value="16" selected>16px</option>
-            <option value="18">18px</option>
-            <option value="20">20px</option>
-            <option value="24">24px</option>
-        </select>
+    <div id="editor-container">
+        <div id="toolbar">
+            <button id="add-text">Add Text</button>
+            <input type="color" id="font-color" value="#000000">
+            <select id="font-family">
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Verdana">Verdana</option>
+            </select>
+            <select id="font-size">
+                <option value="12">12px</option>
+                <option value="16">16px</option>
+                <option value="24">24px</option>
+            </select>
+            <button id="save-progress">Save Progress</button>
+            <button id="export-pdf">Export to PDF</button>
+        </div>
 
-        <label for="font-color">Font Color:</label>
-        <input type="color" id="font-color" value="#000000">
+        <div id="pdf-viewer">
+            <canvas id="pdf-canvas"></canvas>
+            <div id="page-navigation">
+                <button id="prev-page">Previous</button>
+                <button id="next-page">Next</button>
+                <span>Page: <span id="page-num"></span> / <span id="page-count"></span></span>
+            </div>
+        </div>
     </div>
 
-    <!-- Character Sheet Viewer -->
-    <div id="pdf-container" class="pdf-viewer"></div>
-    <button id="create-character">Create Character</button>
-    <button id="save-character" style="display:none;">Save Progress</button>
-    <button id="submit-character" style="display:none;">Submit Character</button>
-
-    <script>
-// Function to handle PDF loading and rendering
-async function loadAndRenderPDF() {
-    const url = 'css/images/D&DBeyondCharacterSheet.pdf';
-    const loadingTask = pdfjsLib.getDocument(url);
-
-    const pdf = await loadingTask.promise;
-    const container = document.getElementById('pdf-container');
-    container.innerHTML = '';
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: 1.5 });
-
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-        // Append the rendered canvas to the container
-        container.appendChild(canvas);
-
-        // Set up the click event for adding draggable text input
-        canvas.addEventListener('click', function (event) {
-            const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            // Call function to add draggable text input at the clicked position
-            addDraggableTextInput(x, y, container);
-        });
-    }
-}
-
-// Function to add draggable text input at the specified position
-function addDraggableTextInput(x, y, container) {
-    const input = document.createElement('textarea');
-    input.className = 'text-input draggable';
-    input.style.left = `${x}px`;
-    input.style.top = `${y}px`;
-
-    const fontSize = document.getElementById('font-size').value;
-    const fontColor = document.getElementById('font-color').value;
-
-    input.style.fontSize = `${fontSize}px`;
-    input.style.color = fontColor;
-
-    // Make the text input draggable
-    makeElementDraggable(input);
-
-    input.addEventListener('blur', function () {
-        if (input.value.trim() === '') {
-            input.remove();
-        }
-    });
-
-    container.appendChild(input);
-    input.focus();
-}
-
-// Function to make an element draggable
-function makeElementDraggable(element) {
-    let isDragging = false;
-
-    element.addEventListener('mousedown', function (e) {
-        isDragging = true;
-        const offsetX = e.clientX - parseInt(element.style.left);
-        const offsetY = e.clientY - parseInt(element.style.top);
-
-        document.addEventListener('mousemove', moveElement);
-
-        document.addEventListener('mouseup', function () {
-            isDragging = false;
-            document.removeEventListener('mousemove', moveElement);
-        });
-
-        function moveElement(event) {
-            if (isDragging) {
-                element.style.left = `${event.clientX - offsetX}px`;
-                element.style.top = `${event.clientY - offsetY}px`;
-            }
-        }
-    });
-}
-
-document.getElementById('create-character').addEventListener('click', function () {
-    document.querySelector('.pdf-viewer').style.display = 'flex';
-    document.querySelector('.text-tools').style.display = 'block';
-    document.getElementById('save-character').style.display = 'inline';
-    document.getElementById('submit-character').style.display = 'inline';
-    loadAndRenderPDF();
-});
-
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script>
+    <script src="js/advanced-pdf-editor.js"></script>
 </body>
 </html>
