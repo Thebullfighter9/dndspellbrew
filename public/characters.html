@@ -97,101 +97,120 @@
     <button id="submit-character" style="display:none;">Submit Character</button>
 
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+       document.getElementById('create-character').addEventListener('click', function () {
+    document.querySelector('.pdf-viewer').style.display = 'flex';
+    document.querySelector('.text-tools').style.display = 'block';
+    document.getElementById('save-character').style.display = 'inline';
+    document.getElementById('submit-character').style.display = 'inline';
+    loadAndModifyPdf();
+});
 
-        document.getElementById('create-character').addEventListener('click', function () {
-            document.querySelector('.pdf-viewer').style.display = 'flex';
-            document.querySelector('.text-tools').style.display = 'block';
-            document.getElementById('save-character').style.display = 'inline';
-            document.getElementById('submit-character').style.display = 'inline';
-            loadAndModifyPdf();
+async function loadAndModifyPdf() {
+    const url = 'css/images/D&DBeyondCharacterSheet.pdf';
+    const loadingTask = pdfjsLib.getDocument(url);
+
+    try {
+        const pdf = await loadingTask.promise;
+        renderPdf(pdf);
+    } catch (error) {
+        console.error("Error loading PDF:", error);
+    }
+}
+
+function renderPdf(pdf) {
+    const container = document.getElementById('pdf-container');
+    container.innerHTML = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+        pdf.getPage(i).then(page => {
+            renderPage(page, container);
         });
+    }
+}
 
-        async function loadAndModifyPdf() {
-            const url = 'css/images/D&DBeyondCharacterSheet.pdf';
-            const loadingTask = pdfjsLib.getDocument(url);
+function renderPage(page, container) {
+    const viewport = page.getViewport({ scale: 1.5 });
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
 
-            const pdf = await loadingTask.promise;
-            const container = document.getElementById('pdf-container');
-            container.innerHTML = '';
+    page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
+        container.appendChild(canvas);
+        canvas.addEventListener('click', handleCanvasClick);
+    });
+}
 
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale: 1.5 });
+function handleCanvasClick(event) {
+    const rect = event.target.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
 
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+    addTextInput(x, y, event.target.parentElement);
+}
 
-                await page.render({ canvasContext: context, viewport: viewport }).promise;
+function addTextInput(x, y, container) {
+    const input = document.createElement('textarea');
+    input.className = 'text-input';
+    setInputStyle(input, x, y);
+    
+    container.appendChild(input);
+    input.focus();
 
-                container.appendChild(canvas);
-
-                // Allow adding text inputs on the PDF
-                canvas.addEventListener('click', function(event) {
-                    const rect = canvas.getBoundingClientRect();
-                    const x = event.clientX - rect.left;
-                    const y = event.clientY - rect.top;
-
-                    const input = document.createElement('textarea');
-                    input.className = 'text-input';
-                    input.style.left = `${x}px`;
-                    input.style.top = `${y}px`;
-
-                    const fontSize = document.getElementById('font-size').value;
-                    const fontColor = document.getElementById('font-color').value;
-
-                    input.style.fontSize = `${fontSize}px`;
-                    input.style.color = fontColor;
-
-                    input.addEventListener('blur', function() {
-                        if (input.value.trim() === '') {
-                            input.remove();
-                        }
-                    });
-
-                    container.appendChild(input);
-                    input.focus();
-                });
-            }
+    input.addEventListener('blur', () => {
+        if (input.value.trim() === '') {
+            input.remove();
         }
+    });
+}
 
-        // Save progress
-        document.getElementById('save-character').addEventListener('click', function() {
-            const pdfContainer = document.getElementById('pdf-container');
-            const pdfState = pdfContainer.innerHTML;
-            const code = Math.random().toString(36).substring(2, 15);
-            localStorage.setItem(`character_${code}`, pdfState);
-            alert(`Progress saved! Your code is: ${code}`);
-        });
+function setInputStyle(input, x, y) {
+    const fontSize = document.getElementById('font-size').value;
+    const fontColor = document.getElementById('font-color').value;
 
-        // Submit character
-        document.getElementById('submit-character').addEventListener('click', function() {
-            const pdfContainer = document.getElementById('pdf-container');
-            const pdfState = pdfContainer.innerHTML;
+    input.style.left = `${x}px`;
+    input.style.top = `${y}px`;
+    input.style.fontSize = `${fontSize}px`;
+    input.style.color = fontColor;
+}
 
-            // Make a POST request to submit the PDF
-            fetch('/submit-character', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ pdfState: pdfState }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Character submitted successfully!');
-                } else {
-                    alert('Failed to submit character. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the character.');
-            });
-        });
+document.getElementById('save-character').addEventListener('click', saveCharacterProgress);
+document.getElementById('submit-character').addEventListener('click', submitCharacter);
+
+function saveCharacterProgress() {
+    const pdfContainer = document.getElementById('pdf-container');
+    const pdfState = pdfContainer.innerHTML;
+    const code = generateCode();
+    
+    localStorage.setItem(`character_${code}`, pdfState);
+    alert(`Progress saved! Your code is: ${code}`);
+}
+
+function generateCode() {
+    return Math.random().toString(36).substring(2, 15);
+}
+
+function submitCharacter() {
+    const pdfContainer = document.getElementById('pdf-container');
+    const pdfState = pdfContainer.innerHTML;
+
+    fetch('/submit-character', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pdfState: pdfState }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.success ? 'Character submitted successfully!' : 'Failed to submit character. Please try again.');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while submitting the character.');
+    });
+}
+
     </script>
 </body>
 </html>
