@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Characters - DND Spell Brew</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        .search-bar {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .search-bar input {
+            width: 80%;
+            padding: 10px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            border: none;
+            background-color: #2b2b2b;
+            color: #fff;
+        }
+
+        .character-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .character-card {
+            background-color: #2b2b2b;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            flex-basis: calc(33.333% - 20px);
+            box-sizing: border-box;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .character-card:hover {
+            transform: scale(1.05);
+        }
+
+        .character-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .character-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .character-name {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #f1c40f;
+            text-align: center;
+        }
+
+        .character-description {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .character-stats {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .character-stat {
+            background-color: #3c3c3c;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            flex-grow: 1;
+            margin: 5px;
+        }
+
+        .character-stat span {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            color: #f1c40f;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1.2em;
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .character-card {
+                flex-basis: calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .character-card {
+                flex-basis: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Character Profiles</h1>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" onkeyup="searchCharacters()" placeholder="Search for characters...">
+        </div>
+
+        <!-- Character Grid -->
+        <div class="character-grid" id="characterGrid">
+            <!-- Character Card -->
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="images/alex.jpg" alt="Alex">
+                </div>
+                <div class="character-name">Alex</div>
+                <div class="character-description">An aspiring coding engineer and skilled writer with a deep passion for gaming and creating intricate virtual worlds.</div>
+                <div class="character-stats">
+                    <div class="character-stat">
+                        <span>Age</span>
+                        18
+                    </div>
+                    <div class="character-stat">
+                        <span>Role</span>
+                        Server Owner
+                    </div>
+                    <div class="character-stat">
+                        <span>Favorite Game</span>
+                        Warzone
+                    </div>
+                    <div class="character-stat">
+                        <span>Skill</span>
+                        Coding
+                    </div>
+                    <div class="character-stat">
+                        <span>Project</span>
+                        DND Spell Brew
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional characters can be added in the same format -->
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="images/character1.jpg" alt="Character 1">
+                </div>
+                <div class="character-name">Character 1</div>
+                <div class="character-description">A brave warrior with unmatched strength and a heart of gold.</div>
+                <div class="character-stats">
+                    <div class="character-stat">
+                        <span>Age</span>
+                        30
+                    </div>
+                    <div class="character-stat">
+                        <span>Role</span>
+                        Warrior
+                    </div>
+                    <div class="character-stat">
+                        <span>Skill</span>
+                        Swordsmanship
+                    </div>
+                    <div class="character-stat">
+                        <span>Alignment</span>
+                        Lawful Good
+                    </div>
+                </div>
+            </div>
+
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="images/character2.jpg" alt="Character 2">
+                </div>
+                <div class="character-name">Character 2</div>
+                <div class="character-description">A cunning rogue who excels in stealth and deception.</div>
+                <div class="character-stats">
+                    <div class="character-stat">
+                        <span>Age</span>
+                        25
+                    </div>
+                    <div class="character-stat">
+                        <span>Role</span>
+                        Rogue
+                    </div>
+                    <div class="character-stat">
+                        <span>Skill</span>
+                        Stealth
+                    </div>
+                    <div class="character-stat">
+                        <span>Alignment</span>
+                        Chaotic Neutral
+                    </div>
+                </div>
+            </div>
+
+            <!-- More characters can be added as needed -->
+        </div>
+
+        <a class="back-link" href="index.html">Back to Home</a>
+    </div>
+
+    <script>
+        function searchCharacters() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const characterCards = document.getElementsByClassName('character-card');
+
+            Array.from(characterCards).forEach(card => {
+                const name = card.getElementsByClassName('character-name')[0].innerText.toLowerCase();
+                if (name.includes(input)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
