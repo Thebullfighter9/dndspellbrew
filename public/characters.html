@@ -3,20 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Character Sheet Editor</title>
+    <title>Character Sheet Editor</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script>
-    <style>
-        .canvas-container {
-            position: relative;
-            margin: 0 auto;
-            border: 1px solid #ddd;
-            max-width: 800px;
-        }
-        .canvas-container img {
-            max-width: 100%;
-        }
-    </style>
+    <script src="js/advanced-pdf-editor.js"></script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -31,12 +20,29 @@
         </nav>
     </header>
 
-    <!-- Character Sheet Editor -->
-    <div id="html-container" class="canvas-container"></div>
-    <button id="addText">Add Text</button>
-    <button id="saveCharacter">Save Progress</button>
-    <button id="exportToPDF">Export to PDF</button>
+    <!-- Tools for Text Editing -->
+    <div class="text-tools">
+        <label for="font-size">Font Size:</label>
+        <select id="font-size">
+            <option value="12">12px</option>
+            <option value="14">14px</option>
+            <option value="16" selected>16px</option>
+            <option value="18">18px</option>
+            <option value="20">20px</option>
+            <option value="24">24px</option>
+        </select>
 
-    <script src="js/advanced-pdf-editor.js"></script>
+        <label for="font-color">Font Color:</label>
+        <input type="color" id="font-color" value="#000000">
+    </div>
+
+    <!-- Character Sheet Viewer -->
+    <div id="pdf-container" class="pdf-viewer">
+        <!-- Include the converted HTML here -->
+        <?php include 'css/images/D&DBeyondCharacterSheet.html'; ?>
+    </div>
+    <button id="create-character">Create Character</button>
+    <button id="save-character" style="display:none;">Save Progress</button>
+    <button id="submit-character" style="display:none;">Submit Character</button>
 </body>
 </html>
