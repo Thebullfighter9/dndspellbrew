@@ -1,90 +1,55 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Initialize Fabric.js canvas
-    const canvas = new fabric.Canvas('pdf-canvas', {
-        backgroundColor: '#fff',
-        selection: false
+// Initialize Fabric.js
+const canvas = new fabric.Canvas('characterCanvas', {
+    width: 800, // Adjust this based on your HTML page size
+    height: 1000, // Adjust this based on your HTML page size
+});
+
+// Load the converted PDF page as an image (assuming it's in the images folder)
+fabric.Image.fromURL('css/images/D&DBeyondCharacterSheet.html', function(img) {
+    img.set({ selectable: false }); // Set the background to be non-selectable
+    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+});
+
+// Add text box on click
+document.getElementById('addText').addEventListener('click', function() {
+    const textbox = new fabric.Textbox('Enter text', {
+        left: 50,
+        top: 50,
+        width: 200,
+        fontSize: 16,
+        fill: '#000000',
+        editable: true,
+    });
+    canvas.add(textbox);
+    canvas.setActiveObject(textbox);
+});
+
+// Save canvas progress
+document.getElementById('saveCharacter').addEventListener('click', function() {
+    const canvasData = JSON.stringify(canvas);
+    const code = Math.random().toString(36).substring(2, 15);
+    localStorage.setItem(`character_${code}`, canvasData);
+    alert(`Progress saved! Your code is: ${code}`);
+});
+
+// Load saved progress
+function loadCharacter(code) {
+    const canvasData = localStorage.getItem(`character_${code}`);
+    if (canvasData) {
+        canvas.loadFromJSON(canvasData, canvas.renderAll.bind(canvas));
+    } else {
+        alert('No saved progress found for this code.');
+    }
+}
+
+// Export to PDF
+document.getElementById('exportToPDF').addEventListener('click', function() {
+    const canvasDataUrl = canvas.toDataURL({
+        format: 'png',
+        multiplier: 2, // Increase resolution
     });
 
-    // Load the PDF using PDF.js
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
-
-    async function loadAndRenderPDF(url) {
-        const loadingTask = pdfjsLib.getDocument(url);
-        const pdf = await loadingTask.promise;
-        const container = document.getElementById('pdf-container');
-        container.innerHTML = ''; // Clear previous content
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const viewport = page.getViewport({ scale: 1.5 });
-
-            const canvasElement = document.createElement('canvas');
-            const context = canvasElement.getContext('2d');
-            canvasElement.height = viewport.height;
-            canvasElement.width = viewport.width;
-
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-            const img = new Image();
-            img.src = canvasElement.toDataURL();
-            img.onload = function () {
-                const imgInstance = new fabric.Image(img, {
-                    left: 0,
-                    top: 0,
-                    selectable: false
-                });
-                canvas.add(imgInstance);
-                canvas.setWidth(viewport.width);
-                canvas.setHeight(viewport.height);
-                canvas.renderAll();
-            };
-
-            container.appendChild(canvasElement);
-        }
-    }
-
-    // Trigger PDF load and render
-    loadAndRenderPDF('css/images/D&DBeyondCharacterSheet.pdf');
-
-    // Adding text via Fabric.js
-    canvas.on('mouse:down', function (options) {
-        if (options.target && options.target.type === 'text') {
-            return;
-        }
-
-        const pointer = canvas.getPointer(options.e);
-        const text = new fabric.Textbox('Edit Me', {
-            left: pointer.x,
-            top: pointer.y,
-            fontSize: 20,
-            fill: '#000',
-            width: 200,
-            editingBorderColor: 'red',
-            editable: true,
-        });
-
-        canvas.add(text).setActiveObject(text);
-        canvas.renderAll();
-        text.enterEditing();
-    });
-
-    // Export to PDF function
-    document.getElementById('save-character').addEventListener('click', exportToPDF);
-
-    function exportToPDF() {
-        const pdf = new jsPDF({
-            orientation: 'portrait',
-            unit: 'px',
-            format: [canvas.getWidth(), canvas.getHeight()]
-        });
-
-        const imgData = canvas.toDataURL({
-            format: 'png',
-            multiplier: 2
-        });
-
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.getWidth(), canvas.getHeight());
-
-        pdf.save('edited_character_sheet.pdf');
-    }
+    const pdf = new jsPDF('p', 'pt', 'a4');
+    pdf.addImage(canvasDataUrl, 'PNG', 0, 0, pdf.internal.pageSize.width, pdf.internal.pageSize.height);
+    pdf.save('character-sheet.pdf');
 });
