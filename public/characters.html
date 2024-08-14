@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Characters</title>
+    <title>Advanced Character Sheet Editor</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script>
     <style>
-        /* Additional styling for Fabric.js canvas */
         .canvas-container {
             position: relative;
             margin: 0 auto;
             border: 1px solid #ddd;
+            max-width: 800px;
+        }
+        .canvas-container img {
+            max-width: 100%;
         }
     </style>
 </head>
@@ -29,9 +32,7 @@
     </header>
 
     <!-- Character Sheet Editor -->
-    <div class="canvas-container">
-        <canvas id="characterCanvas"></canvas>
-    </div>
+    <div id="html-container" class="canvas-container"></div>
     <button id="addText">Add Text</button>
     <button id="saveCharacter">Save Progress</button>
     <button id="exportToPDF">Export to PDF</button>
