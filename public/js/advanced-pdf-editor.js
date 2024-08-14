@@ -1,142 +1,90 @@
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
-
-let pdfDoc = null;
-let currentPage = 1;
-let canvas = new fabric.Canvas('pdf-canvas');
-let fabricObjects = [];
-
-document.getElementById('prev-page').addEventListener('click', () => changePage(-1));
-document.getElementById('next-page').addEventListener('click', () => changePage(1));
-document.getElementById('add-text').addEventListener('click', addText);
-document.getElementById('save-progress').addEventListener('click', saveProgress);
-document.getElementById('export-pdf').addEventListener('click', exportToPDF);
-
-function loadPDF(url) {
-    pdfjsLib.getDocument(url).promise.then(doc => {
-        pdfDoc = doc;
-        document.getElementById('page-count').textContent = pdfDoc.numPages;
-        renderPage(currentPage);
-    });
-}
-
-function renderPage(num) {
-    pdfDoc.getPage(num).then(page => {
-        const viewport = page.getViewport({ scale: 1.5 });
-        const context = canvas.getContext('2d');
-        canvas.setWidth(viewport.width);
-        canvas.setHeight(viewport.height);
-
-        const renderContext = {
-            canvasContext: context,
-            viewport: viewport
-        };
-        page.render(renderContext).promise.then(() => {
-            canvas.clear();
-            fabricObjects.forEach(obj => canvas.add(obj));
-        });
-    });
-    document.getElementById('page-num').textContent = num;
-}
-
-function changePage(offset) {
-    currentPage = Math.min(Math.max(currentPage + offset, 1), pdfDoc.numPages);
-    renderPage(currentPage);
-}
-
-function addText() {
-    const text = new fabric.Textbox('Enter text here', {
-        left: 100,
-        top: 100,
-        fontSize: parseInt(document.getElementById('font-size').value, 10),
-        fill: document.getElementById('font-color').value,
-        fontFamily: document.getElementById('font-family').value
-    });
-    canvas.add(text);
-    fabricObjects.push(text);
-    canvas.setActiveObject(text);
-    text.enterEditing();
-}
-
-function saveProgress() {
-    const json = JSON.stringify(canvas.toJSON());
-    localStorage.setItem(`pdf_page_${currentPage}`, json);
-    alert('Progress saved!');
-}
-
-function loadProgress() {
-    const savedJson = localStorage.getItem(`pdf_page_${currentPage}`);
-    if (savedJson) {
-        canvas.loadFromJSON(savedJson, canvas.renderAll.bind(canvas));
-    }
-}
-
-function exportToPDF() {
-    const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: [canvas.getWidth(), canvas.getHeight()]
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize Fabric.js canvas
+    const canvas = new fabric.Canvas('pdf-canvas', {
+        backgroundColor: '#fff',
+        selection: false
     });
 
-    const pages = [canvas]; // Assuming you have multiple canvases, you'd loop through them
+    // Load the PDF using PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
 
-    pages.forEach((pageCanvas, index) => {
-        pageCanvas.renderAll();
+    async function loadAndRenderPDF(url) {
+        const loadingTask = pdfjsLib.getDocument(url);
+        const pdf = await loadingTask.promise;
+        const container = document.getElementById('pdf-container');
+        container.innerHTML = ''; // Clear previous content
 
-        // Capture the content of the canvas
-        const imgData = pageCanvas.toDataURL('image/png');
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 1.5 });
 
-        // Calculate the proper scaling factor to maintain high quality
-        const width = pdf.internal.pageSize.getWidth();
-        const height = (pageCanvas.getHeight() / pageCanvas.getWidth()) * width;
+            const canvasElement = document.createElement('canvas');
+            const context = canvasElement.getContext('2d');
+            canvasElement.height = viewport.height;
+            canvasElement.width = viewport.width;
 
-        // Add image to PDF, adjust size and position
-        pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-        // Add a new page if there are more canvases to add
-        if (index < pages.length - 1) {
-            pdf.addPage();
+            const img = new Image();
+            img.src = canvasElement.toDataURL();
+            img.onload = function () {
+                const imgInstance = new fabric.Image(img, {
+                    left: 0,
+                    top: 0,
+                    selectable: false
+                });
+                canvas.add(imgInstance);
+                canvas.setWidth(viewport.width);
+                canvas.setHeight(viewport.height);
+                canvas.renderAll();
+            };
+
+            container.appendChild(canvasElement);
         }
-    });
-
-    // Include metadata for the PDF
-    pdf.setProperties({
-        title: "Edited Character Sheet",
-        subject: "Character Sheet PDF Export",
-        author: "Your Name or App Name",
-        keywords: "D&D, Character Sheet, Export",
-        creator: "D&D SpellBrew"
-    });
-
-    // Optional: Add a watermark or additional information to each page
-    const watermarkText = "dndspellbrew.com - Confidential";
-    pages.forEach((_, pageIndex) => {
-        pdf.setPage(pageIndex + 1);
-        pdf.setTextColor(150);
-        pdf.setFontSize(40);
-        pdf.text(watermarkText, width / 2, height / 2, {
-            angle: 45,
-            align: 'center'
-        });
-    });
-
-    // Optional: Add header and footer to each page
-    const totalPages = pdf.getNumberOfPages();
-    for (let i = 1; i <= totalPages; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(10);
-        pdf.setTextColor(100);
-        pdf.text(`Page ${i} of ${totalPages}`, width - 50, height - 10, {
-            align: 'right'
-        });
-        pdf.text('D&D SpellBrew', 10, height - 10, {
-            align: 'left'
-        });
     }
 
-    // Save the PDF with a dynamic file name based on the current date and time
-    const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
-    pdf.save(`edited_character_sheet_${timestamp}.pdf`);
-}
+    // Trigger PDF load and render
+    loadAndRenderPDF('css/images/D&DBeyondCharacterSheet.pdf');
 
-// Initialize the PDF editor with the first page of the PDF
-loadPDF('css/images/D&DBeyondCharacterSheet.pdf');
+    // Adding text via Fabric.js
+    canvas.on('mouse:down', function (options) {
+        if (options.target && options.target.type === 'text') {
+            return;
+        }
+
+        const pointer = canvas.getPointer(options.e);
+        const text = new fabric.Textbox('Edit Me', {
+            left: pointer.x,
+            top: pointer.y,
+            fontSize: 20,
+            fill: '#000',
+            width: 200,
+            editingBorderColor: 'red',
+            editable: true,
+        });
+
+        canvas.add(text).setActiveObject(text);
+        canvas.renderAll();
+        text.enterEditing();
+    });
+
+    // Export to PDF function
+    document.getElementById('save-character').addEventListener('click', exportToPDF);
+
+    function exportToPDF() {
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'px',
+            format: [canvas.getWidth(), canvas.getHeight()]
+        });
+
+        const imgData = canvas.toDataURL({
+            format: 'png',
+            multiplier: 2
+        });
+
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.getWidth(), canvas.getHeight());
+
+        pdf.save('edited_character_sheet.pdf');
+    }
+});
