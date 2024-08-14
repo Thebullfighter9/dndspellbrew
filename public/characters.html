@@ -3,10 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced PDF Editor</title>
+    <title>Characters</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script>
+    <style>
+        /* Additional styling for Fabric.js canvas */
+        .canvas-container {
+            position: relative;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
+    <!-- Navigation Bar -->
     <header>
         <nav>
             <a href="/">Home</a>
@@ -18,36 +28,14 @@
         </nav>
     </header>
 
-    <div id="editor-container">
-        <div id="toolbar">
-            <button id="add-text">Add Text</button>
-            <input type="color" id="font-color" value="#000000">
-            <select id="font-family">
-                <option value="Arial">Arial</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Verdana">Verdana</option>
-            </select>
-            <select id="font-size">
-                <option value="12">12px</option>
-                <option value="16">16px</option>
-                <option value="24">24px</option>
-            </select>
-            <button id="save-progress">Save Progress</button>
-            <button id="export-pdf">Export to PDF</button>
-        </div>
-
-        <div id="pdf-viewer">
-            <canvas id="pdf-canvas"></canvas>
-            <div id="page-navigation">
-                <button id="prev-page">Previous</button>
-                <button id="next-page">Next</button>
-                <span>Page: <span id="page-num"></span> / <span id="page-count"></span></span>
-            </div>
-        </div>
+    <!-- Character Sheet Editor -->
+    <div class="canvas-container">
+        <canvas id="characterCanvas"></canvas>
     </div>
+    <button id="addText">Add Text</button>
+    <button id="saveCharacter">Save Progress</button>
+    <button id="exportToPDF">Export to PDF</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script>
     <script src="js/advanced-pdf-editor.js"></script>
 </body>
 </html>
